@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useState } from 'react';
+import React, { memo, useCallback, useRef, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import Modal from '../../../ui/components/Modal';
 import { IMAGE_DELIMITER } from '../utils/images';
@@ -11,7 +11,7 @@ import TweetMessage from './tweet/TweetMessage';
 import ControlButtons from './buttons/ControlButtons';
 import IconButtons from './buttons/IconButtons';
 import { usePhone } from '@os/phone/hooks/usePhone';
-import { getNewLineCount } from '../utils/message';
+import { getNewLineCount, makeTriggerRegex, normalizeHtml } from '../utils/message';
 import { NewTweet, TwitterEvents } from '@typings/twitter';
 import fetchNui from '@utils/fetchNui';
 import { ServerPromiseResp } from '@typings/common';
@@ -20,6 +20,8 @@ import { promiseTimeout } from '../../../utils/promiseTimeout';
 import { useSnackbar } from '@os/snackbar/hooks/useSnackbar';
 import { toggleKeys } from '../../../ui/components/Input';
 import { Box, styled } from '@mui/material';
+import { useTweetsValue } from '../hooks/state';
+import MentionsOverlay from './mentions/MentionsOverlay';
 
 const ButtonsContainer = styled(Box)({
   paddingBottom: '8px',
@@ -40,11 +42,18 @@ const AddTweetModal = () => {
   const { addAlert } = useSnackbar();
   const { t } = useTranslation();
 
+  const tweets = useTweetsValue();
+
+  const tweetMessageRef = useRef<string>(null);
+
   const [showEmoji, setShowEmoji] = useState(false);
   const [showImagePrompt, setShowImagePrompt] = useState(false);
   const [link, setLink] = useState('');
 
   const [images, setImages] = useState<Image[]>([]);
+
+  const [mentionSuggestion, setMentionSuggestion] = useState<any[]>([]);
+  const [showMentions, setShowMentions] = useState<boolean>(false);
 
   const reset = () => {
     setShowImagePrompt(false);
@@ -62,7 +71,39 @@ const AddTweetModal = () => {
 
   const handleImageChange = useCallback((link) => setLink(link), []);
 
-  const handleMessageChange = useCallback((message) => setMessage(message), [setMessage]);
+  // BIG FUNCTION HERE!!!!!!
+  const handleMessageChange = (e: any) => {
+    tweetMessageRef.current = e.target.value;
+    const value = normalizeHtml(tweetMessageRef.current);
+    console.log(value);
+
+    let matches = [];
+
+    if (value.length > 0) {
+      const regex = makeTriggerRegex();
+      const regexpMatch = value.match(regex);
+
+      if (regexpMatch) {
+        const newValue = regexpMatch[1].replace('@', '').trim();
+
+        matches = tweets.filter((tweet) => {
+          const regExp = new RegExp(`${newValue}`, 'gi');
+
+          return tweet.profile_name.match(regExp);
+        });
+
+        if (matches) {
+          setMentionSuggestion(matches);
+        }
+
+        if (mentionSuggestion) {
+          setShowMentions(true);
+        }
+      } else {
+        setShowMentions(false);
+      }
+    }
+  };
 
   if (!ResourceConfig) return null;
   const { characterLimit, newLineLimit } = ResourceConfig.twitter;
@@ -143,10 +184,14 @@ const AddTweetModal = () => {
   return (
     <Modal visible={modalVisible} handleClose={_handleClose}>
       <TweetMessage
+        ref={tweetMessageRef}
         modalVisible={modalVisible}
         onEnter={submitTweet}
         message={message}
         handleChange={handleMessageChange}
+        suggestions={mentionSuggestion}
+        showSuggestions={showMentions}
+        closeSuggestions={() => setShowMentions(false)}
       />
       <ImagePrompt visible={showImagePrompt} value={link} handleChange={handleImageChange} />
       <EmojiSelect visible={showEmoji} onEmojiClick={handleSelectEmoji} />

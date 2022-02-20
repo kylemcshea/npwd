@@ -90,8 +90,8 @@ export const useKeyboardService = () => {
 
   const backspaceHandler = useCallback(
     (event) => {
-      if (['input', 'textarea'].includes(event.target.nodeName.toLowerCase())) {
-        // Dont anything if we are typing something :)
+      if (['input', 'textarea', 'div'].includes(event.target.nodeName.toLowerCase())) {
+        // Dont anything if we are typing something :) - div is used here for 'contentEditable'
         return;
       }
       history.goBack();
