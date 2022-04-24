@@ -35,6 +35,11 @@ import { INotificationIcon } from '@os/notifications/providers/NotificationsProv
 import { BrowserApp } from '../../../apps/browser/components/BrowserApp';
 import { MatchApp } from '../../../apps/match/components/MatchApp';
 import TwitterContainer from '../../../apps/twitter/components/TwitterContainer';
+import {
+  DARKCHAT_APP_PRIMARY_COLOR,
+  DARKCHAT_APP_TEXT_COLOR,
+} from '../../../apps/darkchat/darkchat.theme';
+import DarkChatApp from '../../../apps/darkchat/DarkChatApp';
 
 export interface IAppConfig {
   id: string;
@@ -82,6 +87,16 @@ export const APPS: IAppConfig[] = [
     path: '/messages',
     Route: () => (
       <AppRoute id="MESSAGES" path="/messages" component={MessagesApp} emitOnOpen={false} />
+    ),
+  },
+  {
+    id: 'DARKCHAT',
+    nameLocale: 'APPS_DARKCHAT',
+    backgroundColor: DARKCHAT_APP_PRIMARY_COLOR,
+    color: DARKCHAT_APP_TEXT_COLOR,
+    path: '/darkchat',
+    Route: () => (
+      <AppRoute id="DARKCHAT" path="/darkchat" component={DarkChatApp} emitOnOpen={false} />
     ),
   },
   {
