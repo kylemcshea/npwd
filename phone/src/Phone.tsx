@@ -32,6 +32,7 @@ import { useNoteListener } from './apps/notes/hooks/useNoteListener';
 import { PhoneSnackbar } from '@os/snackbar/components/PhoneSnackbar';
 import { useInvalidSettingsHandler } from './apps/settings/hooks/useInvalidSettingsHandler';
 import { useKeyboardService } from '@os/keyboard/hooks/useKeyboardService';
+import { useDarkchatService } from './apps/darkchat/hooks/useDarkchatService';
 
 function Phone() {
   const { i18n } = useTranslation();
@@ -57,6 +58,7 @@ function Phone() {
   useNoteListener();
   useCallService();
   useDialService();
+  useDarkchatService();
   useInvalidSettingsHandler();
 
   const { modal: callModal } = useCallModal();
