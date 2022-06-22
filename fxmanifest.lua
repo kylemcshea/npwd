@@ -1,7 +1,7 @@
 fx_version "cerulean"
 game "gta5"
 description 'js runtime monkaW'
-authors { "itschip",  "erik-sn", "TasoOneAsia", "kidz", "RockySouthpaw"}
+authors { "itschip", "erik-sn", "TasoOneAsia", "kidz", "RockySouthpaw"}
 version '1.2.99'
 
 client_scripts {
@@ -16,12 +16,12 @@ server_script {
     'resources/dist/server/server.js'
 }
 
-ui_page 'phone/dist/index.html'
+ui_page 'resources/html/index.html'
 
 files {
     'config.json',
-    'phone/dist/index.html',
-    'phone/dist/*.js',
+    'resources/html/index.html',
+    'resources/html/**/*',
 }
 
 dependency {
