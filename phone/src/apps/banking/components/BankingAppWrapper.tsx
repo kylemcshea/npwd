@@ -16,7 +16,6 @@ import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import { styled } from '@mui/material/styles';
 import { Fab } from '@mui/material';
 import { BankingTransactionsPage } from './pages/BankingTransactionsPage';
-import { BankingBillsPage } from './pages/BankingBillsPage';
 import { DebtKollectorApp } from '../../debtkollector/components/DebtKollectorApp';
 // AppContent by default has a React.Suspense which can be used to handle the app as a whole, for
 // when it must resolve the render promise. But, we must make sure that this is is mounted in a component
