@@ -44,11 +44,9 @@ const StyledBoxRoot: React.FC<BoxProps> = styled(Box)({
 });
 
 export const EmergencyModal: React.FC = () => {
-  //const { call } = useCall();
   const wallpaper = useWallpaper();
   const [context, setContext] = useState(null);
 
-  //if (!call) return null;
   useEffect(() => {
     if (isEnvBrowser()) {
       DispatchIntro.play().then((playback) => {
@@ -60,11 +58,9 @@ export const EmergencyModal: React.FC = () => {
       fetchNui<ServerPromiseResp<AnimationModel>>(EmergencyEvents.ANIMATION, {
         isCalling: true,
       });
-      console.log('fetching nui PLAY_AUDIO');
       fetchNui<ServerPromiseResp<AudioEventArguments>>(EmergencyEvents.PLAY_AUDIO, {
         type: AudioTypes.START_CALL,
       }).then((data) => {
-        console.log('played nui PLAY_AUDIO');
         DispatchIntro.play().then((playback) => {
           setTimeout(() => {
             setContext(<EmergencyChoice setContext={setContext} />);
