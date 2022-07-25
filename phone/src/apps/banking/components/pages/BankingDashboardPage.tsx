@@ -4,7 +4,6 @@ import fetchNui from '@utils/fetchNui';
 import {
   Box,
   IconButton,
-  Input,
   InputAdornment,
   InputLabel,
   LinearProgress,
@@ -12,8 +11,6 @@ import {
   Typography,
   Alert,
 } from '@mui/material';
-import Fab from '@mui/material/Fab';
-import { styled } from '@mui/material/styles';
 import { useApp } from '@os/apps/hooks/useApps';
 import SendIcon from '@mui/icons-material/Send';
 import { ServerPromiseResp } from '@typings/common';
@@ -49,7 +46,6 @@ const useStyles = makeStyles((theme) => ({
 
 export const BankingDashboardPage: React.FC = () => {
   const classes = useStyles();
-  const banking = useApp('BANKING');
   const [balance, setBalance] = useState(<LinearProgress color="success" />);
   const [iban, setIban] = useState('-');
   const { addNotificationAlert } = useNotifications();

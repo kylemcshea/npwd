@@ -1,5 +1,5 @@
 import React from 'react';
-import { Avatar, ListItem, ListItemAvatar, ListItemText, TableCell, TableRow } from '@mui/material';
+import { TableCell, TableRow } from '@mui/material';
 import { Transaction, TransactionType } from '@typings/banking';
 import OutboxIcon from '@mui/icons-material/Outbox';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
@@ -13,16 +13,16 @@ export const TransactionItem: React.FC<{ transaction: Transaction }> = ({
   let icon;
   switch (transaction.type) {
     case TransactionType.DEPOSIT:
-      icon = <AddCard color="primary" />;
+      icon = <AddCard />;
       break;
     case TransactionType.WITHDRAW:
-      icon = <Payments color="primary" />;
+      icon = <Payments />;
       break;
     case TransactionType.TRANSFER:
-      icon = <OutboxIcon color="primary" />;
+      icon = <OutboxIcon />;
       break;
     default:
-      icon = <HelpOutlineIcon color="primary" />;
+      icon = <HelpOutlineIcon />;
       break;
   }
 
@@ -31,9 +31,7 @@ export const TransactionItem: React.FC<{ transaction: Transaction }> = ({
       <TableCell component="th" scope="row">
         {icon}
       </TableCell>
-      <TableCell style={{ color: 'rgb(33, 150, 243)' }} align="right">
-        ${formatMoney(transaction.value)}
-      </TableCell>
+      <TableCell align="right">${formatMoney(transaction.value)}</TableCell>
       <TableCell align="right">{transaction.sender_name}</TableCell>
       <TableCell align="right">{transaction.receiver_name}</TableCell>
     </TableRow>
