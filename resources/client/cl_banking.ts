@@ -1,6 +1,5 @@
 import { BankingEvents, Transaction } from '../../typings/banking';
 import { RegisterNuiCB, RegisterNuiProxy } from './cl_utils';
-// import { onNetPromise } from '../server/lib/PromiseNetEvents/onNetPromise';
 import { sendMessage } from '../utils/messages';
 export interface IUniversalNotification {
   app: string;
@@ -22,8 +21,6 @@ RegisterNuiProxy(BankingEvents.GET_ACCOUNTS);
 RegisterNuiProxy(BankingEvents.TRANSFER_MONEY);
 RegisterNuiProxy(BankingEvents.GET_TRANSACTIONS);
 RegisterNuiCB<Transaction>(BankingEvents.TRANSFER_FINAL, (transaction, cb) => {
-  console.log('transfer final was hit.');
-  console.log(transaction);
   emitNet(
     'okokBanking:TransferMoney',
     transaction.value,
@@ -36,10 +33,5 @@ RegisterNuiCB<Transaction>(BankingEvents.TRANSFER_FINAL, (transaction, cb) => {
 });
 
 onNet('npwd:sendNotification', (data: IUniversalNotification) => {
-  console.log('dispatching notification');
   sendMessage('GLOBALNOTIFICATION', 'sendNotification', data);
 });
-
-// fetchNui("")
-//onNet("npwd:sendNotification",  );
-//abracadabra
