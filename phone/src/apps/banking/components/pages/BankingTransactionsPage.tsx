@@ -92,11 +92,6 @@ export const BankingTransactionsPage: React.FC = () => {
           </TableBody>
         </Table>
       </TableContainer>
-      {/*<List>*/}
-      {/*  {transactions.map((transaction, index)=>{*/}
-      {/*    return <TransactionItem transaction={transaction}/>;*/}
-      {/*  })}*/}
-      {/*</List>*/}
     </div>
   );
 };
