@@ -18,13 +18,13 @@ onNetPromise<void, Account>(BankingEvents.GET_ACCOUNTS, async (reqObj, resp) => 
   });
 });
 
+//just a server callback
+//server event npwd:transfermoney
 onNetPromise<TranscationArguments, TransactionStatus>(
   BankingEvents.TRANSFER_MONEY,
   async (reqObj, resp) => {
     bankingService.handleBankTransfer(reqObj, resp).catch((e) => {
-      bankingLogger.error(
-        `Error occurred in transfer money (${reqObj.source}), Error: ${e.message}`,
-      );
+      bankingLogger.error(`Error occurred in transfer money (${reqObj.data}), Error: ${e.message}`);
       resp({ status: 'error', errorMsg: 'INTERNAL_ERROR' });
     });
   },

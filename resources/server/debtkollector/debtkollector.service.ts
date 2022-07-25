@@ -11,10 +11,10 @@ class _BillingService {
     this.billsDB = BillsDB;
     billsLogger.debug('Garage service started');
   }
+  //RegisterNuiProxy(BillingEvents.GET_BILLS);
 
   async handleFetchBills(req: PromiseRequest<void>, resp: PromiseEventResp<Bills[]>) {
     try {
-      console.log('Debt Kollector Service was hit');
       // Grabs Player ID
       const identifier = PlayerService.getIdentifier(req.source);
       // Grabs Bills pertaining to the player.

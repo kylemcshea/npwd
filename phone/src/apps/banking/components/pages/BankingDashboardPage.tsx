@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import fetchNui from '@utils/fetchNui';
+
 import {
   Box,
   IconButton,
@@ -8,11 +9,12 @@ import {
   LinearProgress,
   OutlinedInput,
   Typography,
+  Alert,
 } from '@mui/material';
 import { useApp } from '@os/apps/hooks/useApps';
 import SendIcon from '@mui/icons-material/Send';
 import { ServerPromiseResp } from '@typings/common';
-import { Account, BankingEvents, TransactionStatus } from '@typings/banking';
+import { Account, BankingEvents, TransactionResult, TransactionStatus } from '@typings/banking';
 import { isEnvBrowser } from '@utils/misc';
 import Divider from '@mui/material/Divider';
 import { useNotifications } from '@os/notifications/hooks/useNotifications';
@@ -22,6 +24,7 @@ import { TextField } from '@ui/components/Input';
 import ForwardToInboxIcon from '@mui/icons-material/ForwardToInbox';
 import makeStyles from '@mui/styles/makeStyles';
 import { formatMoney } from '../../utils/banking.utils';
+import { toggleKeys } from '../../../../ui/components/Input';
 
 const useStyles = makeStyles((theme) => ({
   numberInput: {
@@ -58,146 +61,205 @@ export const BankingDashboardPage: React.FC = () => {
         setIban('BOBBYB');
       }, 1000);
     } else {
-      fetchNui<ServerPromiseResp<Account>>(BankingEvents.GET_ACCOUNTS).then((resp) => {
-        if (resp.data) {
-          setBalance(<span>{formatMoney(resp.data.bank)}</span>);
-          setIban(resp.data.iban);
-        }
-      });
+      fetchNui<ServerPromiseResp<Account>>(BankingEvents.GET_ACCOUNTS)
+        .then((resp) => {
+          if (resp.data) {
+            setBalance(<span>{formatMoney(resp.data.bank)}</span>);
+            setIban(resp.data.iban);
+          }
+        })
+        .catch(() => {
+          let notification: INotification = {
+            app: 'BANKING',
+            id: 'banking:transaction:error',
+            title: '404',
+            content: 'Not found',
+            icon,
+            notificationIcon,
+            sound: true,
+          };
+          addNotificationAlert(notification);
+        });
     }
-  });
+  }, [updater]);
 
   return (
     <Box height="100%" width="100%" p={2}>
       <Typography variant={'h3'} style={{ color: 'rgb(33, 150, 243)' }}>
         ${balance}
       </Typography>
-      <InputLabel htmlFor="account-number" />
-      <OutlinedInput
-        id="account-number"
-        label="Standard"
-        style={{ width: '100%' }}
-        value={`IBAN: ${iban}`}
-        readOnly={true}
-        disabled={true}
-      />
+      {iban == null ? (
+        <Alert severity="warning">
+          Please visit a bank to set an IBAN to be able to transfer money.
+        </Alert>
+      ) : (
+        <>
+          <InputLabel htmlFor="account-number" />
+          <OutlinedInput
+            id="account-number"
+            label="Standard"
+            style={{ width: '100%' }}
+            value={`IBAN: ${iban}`}
+            readOnly={true}
+            disabled={true}
+          />
+        </>
+      )}
       <Divider />
-      <Typography
-        variant={'h4'}
-        style={{ color: 'rgb(33, 150, 243)', marginTop: '3em', textAlign: 'center' }}
-      >
-        <ForwardToInboxIcon /> Send money ⬇
-      </Typography>
 
-      <FormControl fullWidth sx={{ m: 1 }}>
-        <TextField
-          id="transaction-iban"
-          label="IBAN"
-          variant="outlined"
-          InputProps={{
-            startAdornment: <InputAdornment position="start">#</InputAdornment>,
-          }}
-          style={{ width: '100%', marginTop: '0.5em', textTransform: 'uppercase' }}
-        />
-      </FormControl>
-      <FormControl fullWidth sx={{ m: 1 }}>
-        <InputLabel htmlFor="transaction-amount">Amount</InputLabel>
-        <OutlinedInput
-          className={classes.numberInput}
-          startAdornment={<InputAdornment position="start">$</InputAdornment>}
-          endAdornment={
-            <InputAdornment position="end">
-              <IconButton
-                style={{ display: `${click ? 'none' : 'block'}` }}
-                onClick={() => {
-                  const target_iban: HTMLInputElement = document.getElementById(
-                    'transaction-iban',
-                  ) as HTMLInputElement;
-                  const transaction_amount: HTMLInputElement = document.getElementById(
-                    'transaction-amount',
-                  ) as HTMLInputElement;
+      {iban != null ? (
+        <>
+          <Typography
+            variant={'h4'}
+            style={{ color: 'rgb(33, 150, 243)', marginTop: '3em', textAlign: 'center' }}
+          >
+            <ForwardToInboxIcon /> Send money ⬇
+          </Typography>
 
-                  // saves data to temp variables.
-                  const targetIbanValue: string = target_iban.value.toUpperCase();
-                  const targetAmount: string = transaction_amount.value;
+          <FormControl fullWidth sx={{ m: 1 }}>
+            <TextField
+              id="transaction-iban"
+              label="IBAN"
+              variant="outlined"
+              InputProps={{
+                startAdornment: <InputAdornment position="start">#</InputAdornment>,
+              }}
+              style={{ width: '100%', marginTop: '0.5em', textTransform: 'uppercase' }}
+            />
+          </FormControl>
+          <FormControl fullWidth sx={{ m: 1 }}>
+            <InputLabel htmlFor="transaction-amount">Amount</InputLabel>
+            <OutlinedInput
+              onFocus={(e) => {
+                toggleKeys(false);
+              }}
+              onBlur={(e) => {
+                toggleKeys(true);
+              }}
+              className={classes.numberInput}
+              startAdornment={<InputAdornment position="start">$</InputAdornment>}
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton
+                    style={{ display: `${click ? 'none' : 'block'}` }}
+                    onClick={() => {
+                      setClick(true);
+                      const target_iban: HTMLInputElement = document.getElementById(
+                        'transaction-iban',
+                      ) as HTMLInputElement;
+                      const transaction_amount: HTMLInputElement = document.getElementById(
+                        'transaction-amount',
+                      ) as HTMLInputElement;
 
-                  // Clear Data + Disable button.
-                  setClick(true);
+                      // saves data to temp variables.
+                      const targetIbanValue: string = target_iban.value.toUpperCase();
+                      const targetAmount: string = transaction_amount.value;
+                      
+                      // resets values.
+                      target_iban.value = '';
+                      transaction_amount.value = '';
+                      if (isEnvBrowser()) {
+                        let notification: INotification = {
+                          app: 'BANKING',
+                          id: 'banking:transaction:invalid_iban',
+                          title: 'success',
+                          content: 'mock success',
+                          icon,
+                          notificationIcon,
+                        };
+                        addNotificationAlert(notification);
+                        return;
+                      }
 
-                  // resets values.
-                  target_iban.value = '';
-                  transaction_amount.value = '';
+                      fetchNui<ServerPromiseResp<TransactionStatus>>(BankingEvents.TRANSFER_MONEY, {
+                        targetIBAN: targetIbanValue,
+                        amount: targetAmount,
+                      })
+                        .then((resp) => {
+                          let notification: INotification;
+                          switch (resp.data) {
+                            case TransactionStatus.SUCCESS:
+                              break;
+                            case TransactionStatus.INVALID_TARGET_IBAN:
+                              notification = {
+                                app: 'BANKING',
+                                id: 'banking:transaction:invalid_iban',
+                                title: 'no such iban',
+                                content: 'The IBAN you provided does not exist',
+                                icon,
+                                notificationIcon,
+                              };
+                              break;
+                            case TransactionStatus.INVALID_NUMBER:
+                              notification = {
+                                app: 'BANKING',
+                                id: 'banking:transaction:hackerman',
+                                title: 'Hackerman',
+                                content: 'That is not even a number!?',
+                                icon,
+                                notificationIcon,
+                              };
+                              break;
+                            case TransactionStatus.INSUFFICIENT_BALANCE:
+                              notification = {
+                                app: 'BANKING',
+                                id: 'banking:transaction:insufficient_balance',
+                                title: 'Poor man',
+                                content: 'You do not have this amount of money',
+                                icon,
+                                notificationIcon,
+                              };
+                              break;
+                            default:
+                              notification = {
+                                app: 'BANKING',
+                                id: 'banking:transaction:error',
+                                title: 'uh oh!',
+                                content: `Something went wrong (default)!`,
+                                icon,
+                                notificationIcon,
+                              };
+                              break;
+                          }
+                          if (notification != undefined) {
+                            addNotificationAlert(notification);
+                          }
 
-                  fetchNui<ServerPromiseResp<TransactionStatus>>(BankingEvents.TRANSFER_MONEY, {
-                    targetIBAN: targetIbanValue,
-                    amount: targetAmount,
-                  })
-                    .then((resp) => {
-                      setUpdater(updater + 1);
-                      let notification: INotification;
-                      switch (resp.data) {
-                        case TransactionStatus.SUCCESS:
-                          notification = {
-                            app: 'BANKING',
-                            id: 'banking:transaction:success',
-                            title: 'transaction completed succesfully',
-                            content: 'Succesfully transfered money to the account.',
-                            icon,
-                            notificationIcon,
-                          };
-
-                          break;
-                        case TransactionStatus.INVALID_TARGET_IBAN:
-                          notification = {
-                            app: 'BANKING',
-                            id: 'banking:transaction:invalid_iban',
-                            title: 'no such iban',
-                            content: 'The IBAN you provided',
-                            icon,
-                            notificationIcon,
-                          };
-                          break;
-                        default:
-                          notification = {
+                          setTimeout(function () {
+                            setClick(false);
+                            setUpdater(updater + 1);
+                          }, 500);
+                        })
+                        .catch(() => {
+                          let notification: INotification = {
                             app: 'BANKING',
                             id: 'banking:transaction:error',
-                            title: 'uh oh!',
-                            content: 'Something went wrong!',
+                            title: 'error!',
+                            content: 'Bobby didnt test this...',
                             icon,
                             notificationIcon,
                           };
-                          break;
-                      }
-                      addNotificationAlert(notification);
-                      setTimeout(function () {
-                        setClick(false);
-                      }, 500);
-                    })
-                    .catch(() => {
-                      let notification: INotification = {
-                        app: 'BANKING',
-                        id: 'banking:transaction:error',
-                        title: 'uh oh!',
-                        content: 'Something went wrong!',
-                        icon,
-                        notificationIcon,
-                      };
-                      addNotificationAlert(notification);
-                      setTimeout(function () {
-                        setClick(false);
-                      }, 500);
-                    });
-                }}
-              >
-                <SendIcon />
-              </IconButton>
-            </InputAdornment>
-          }
-          id="transaction-amount"
-          type={'number'}
-          label="Amount"
-        />
-      </FormControl>
+                          addNotificationAlert(notification);
+                          setTimeout(function () {
+                            setClick(false);
+                            setUpdater(updater + 1);
+                          }, 500);
+                        });
+                    }}
+                  >
+                    <SendIcon />
+                  </IconButton>
+                </InputAdornment>
+              }
+              id="transaction-amount"
+              type={'number'}
+              label="Amount"
+            />
+          </FormControl>
+        </>
+      ) : (
+        ''
+      )}
       <br></br>
     </Box>
   );

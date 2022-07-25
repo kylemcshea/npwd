@@ -1,4 +1,6 @@
 import {
+  LinearProgress,
+  List,
   Paper,
   Table,
   TableBody,
@@ -15,47 +17,47 @@ import { TransactionItem } from '../TransactionItem';
 import { isEnvBrowser } from '@utils/misc';
 
 export const BankingTransactionsPage: React.FC = () => {
-  const [transactions, setTransactions] = useState([]);
+  const [transactions, setTransactions] = useState(null);
   useEffect(() => {
     if (isEnvBrowser()) {
-      const trans: Transaction[] = [
-        {
-          id: 1,
-          value: 100,
-          sender_name: 'DSRPDEV',
-          receiver_name: 'DSRPTEST',
-          type: TransactionType.TRANSFER,
-          sender_identifier: 'test',
-          receiver_identifier: 'test',
-        },
-        {
-          id: 2,
-          value: 100,
-          sender_name: 'DSRPDEV',
-          receiver_name: 'DSRPTEST',
-          type: TransactionType.DEPOSIT,
-          sender_identifier: 'test',
-          receiver_identifier: 'test',
-        },
-        {
-          id: 3,
-          value: 100,
-          sender_name: 'DSRPDEV',
-          receiver_name: 'DSRPTEST',
-          type: TransactionType.WITHDRAW,
-          sender_identifier: 'test',
-          receiver_identifier: 'test',
-        },
-        {
-          id: 4,
-          value: 100,
-          sender_name: 'DSRPDEV',
-          receiver_name: 'DSRPTEST',
-          type: TransactionType.TRANSFER,
-          sender_identifier: 'test',
-          receiver_identifier: 'test',
-        },
-      ];
+      const trans: Transaction[] = [];
+      //   {
+      //     id: 1,
+      //     value: 100,
+      //     sender_name: 'DSRPDEV',
+      //     receiver_name: 'DSRPTEST',
+      //     type: TransactionType.TRANSFER,
+      //     sender_identifier: 'test',
+      //     receiver_identifier: 'test',
+      //   },
+      //   {
+      //     id: 2,
+      //     value: 100,
+      //     sender_name: 'DSRPDEV',
+      //     receiver_name: 'DSRPTEST',
+      //     type: TransactionType.DEPOSIT,
+      //     sender_identifier: 'test',
+      //     receiver_identifier: 'test',
+      //   },
+      //   {
+      //     id: 3,
+      //     value: 100,
+      //     sender_name: 'DSRPDEV',
+      //     receiver_name: 'DSRPTEST',
+      //     type: TransactionType.WITHDRAW,
+      //     sender_identifier: 'test',
+      //     receiver_identifier: 'test',
+      //   },
+      //   {
+      //     id: 4,
+      //     value: 100,
+      //     sender_name: 'DSRPDEV',
+      //     receiver_name: 'DSRPTEST',
+      //     type: TransactionType.TRANSFER,
+      //     sender_identifier: 'test',
+      //     receiver_identifier: 'test',
+      //   },
+      // ];
       setTransactions(trans);
     } else {
       fetchNui<ServerPromiseResp<Transaction[]>>(BankingEvents.GET_TRANSACTIONS).then((resp) => {
@@ -64,7 +66,7 @@ export const BankingTransactionsPage: React.FC = () => {
         }
       });
     }
-  });
+  }, []);
   return (
     <div id={'transactions-page'}>
       <TableContainer component={Paper}>
@@ -78,9 +80,15 @@ export const BankingTransactionsPage: React.FC = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {transactions.map((transaction, item) => {
-              return <TransactionItem transaction={transaction} />;
-            })}
+            {transactions == null ? (
+              <LinearProgress />
+            ) : transactions.length == 0 ? (
+              'No transactions found'
+            ) : (
+              transactions.map((transaction, item) => {
+                return <TransactionItem transaction={transaction} />;
+              })
+            )}
           </TableBody>
         </Table>
       </TableContainer>

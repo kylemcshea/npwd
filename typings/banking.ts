@@ -6,6 +6,8 @@ export interface Account {
 export interface TransactionData {
   bank: number;
   iban: string;
+  identifier: string;
+  target_identifier: string;
   target_bank: number;
   target_iban: string;
 }
@@ -22,6 +24,7 @@ export enum BankingEvents {
   GET_ACCOUNTS = 'npwd:getAccounts',
   TRANSFER_MONEY = 'npwd:transferMoney',
   GET_TRANSACTIONS = 'npwd:getTransactinos',
+  TRANSFER_FINAL = 'npwd:transferFinal',
 }
 
 export enum TransactionStatus {
@@ -40,6 +43,12 @@ export interface Transaction {
   type: TransactionType;
   sender_identifier: string;
   receiver_identifier: string;
+  bank: number;
+}
+
+export interface TransactionResult {
+  status: TransactionStatus;
+  transaction: Transaction;
 }
 
 export enum TransactionType {
