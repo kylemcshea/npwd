@@ -89,6 +89,7 @@ AddEventHandler("npwd:TransferMoney", function(source_iban, target_iban, amount)
     end
 
     if (targetXPlayer~=nil) then 
+        targetXPlayer.addAccountMoney('bank', amount)
         TriggerClientEvent("npwd:sendNotification",targetPlayerID, {
             title="Money received",
             content="You received $"..amount.." from "..sourceInfo.iban,

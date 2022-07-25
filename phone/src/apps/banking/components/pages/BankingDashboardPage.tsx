@@ -24,6 +24,7 @@ import { TextField } from '@ui/components/Input';
 import ForwardToInboxIcon from '@mui/icons-material/ForwardToInbox';
 import makeStyles from '@mui/styles/makeStyles';
 import { formatMoney } from '../../utils/banking.utils';
+import { toggleKeys } from '../../../../ui/components/Input';
 
 const useStyles = makeStyles((theme) => ({
   numberInput: {
@@ -129,6 +130,12 @@ export const BankingDashboardPage: React.FC = () => {
           <FormControl fullWidth sx={{ m: 1 }}>
             <InputLabel htmlFor="transaction-amount">Amount</InputLabel>
             <OutlinedInput
+              onFocus={(e) => {
+                toggleKeys(false);
+              }}
+              onBlur={(e) => {
+                toggleKeys(true);
+              }}
               className={classes.numberInput}
               startAdornment={<InputAdornment position="start">$</InputAdornment>}
               endAdornment={
@@ -177,7 +184,6 @@ export const BankingDashboardPage: React.FC = () => {
                           console.log(resp.data);
                           switch (resp.data) {
                             case TransactionStatus.SUCCESS:
-                              console.log('transferring..');
                               break;
                             case TransactionStatus.INVALID_TARGET_IBAN:
                               notification = {
