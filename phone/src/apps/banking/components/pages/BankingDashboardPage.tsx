@@ -10,6 +10,7 @@ import {
   LinearProgress,
   OutlinedInput,
   Typography,
+  Alert,
 } from '@mui/material';
 import Fab from '@mui/material/Fab';
 import { styled } from '@mui/material/styles';
@@ -90,164 +91,179 @@ export const BankingDashboardPage: React.FC = () => {
       <Typography variant={'h3'} style={{ color: 'rgb(33, 150, 243)' }}>
         ${balance}
       </Typography>
-      <InputLabel htmlFor="account-number" />
-      <OutlinedInput
-        id="account-number"
-        label="Standard"
-        style={{ width: '100%' }}
-        value={`IBAN: ${iban}`}
-        readOnly={true}
-        disabled={true}
-      />
+      {iban == null ? (
+        <Alert severity="warning">
+          Please visit a bank to set an IBAN to be able to transfer money.
+        </Alert>
+      ) : (
+        <>
+          <InputLabel htmlFor="account-number" />
+          <OutlinedInput
+            id="account-number"
+            label="Standard"
+            style={{ width: '100%' }}
+            value={`IBAN: ${iban}`}
+            readOnly={true}
+            disabled={true}
+          />
+        </>
+      )}
       <Divider />
-      <Typography
-        variant={'h4'}
-        style={{ color: 'rgb(33, 150, 243)', marginTop: '3em', textAlign: 'center' }}
-      >
-        <ForwardToInboxIcon /> Send money ⬇
-      </Typography>
 
-      <FormControl fullWidth sx={{ m: 1 }}>
-        <TextField
-          id="transaction-iban"
-          label="IBAN"
-          variant="outlined"
-          InputProps={{
-            startAdornment: <InputAdornment position="start">#</InputAdornment>,
-          }}
-          style={{ width: '100%', marginTop: '0.5em', textTransform: 'uppercase' }}
-        />
-      </FormControl>
-      <FormControl fullWidth sx={{ m: 1 }}>
-        <InputLabel htmlFor="transaction-amount">Amount</InputLabel>
-        <OutlinedInput
-          className={classes.numberInput}
-          startAdornment={<InputAdornment position="start">$</InputAdornment>}
-          endAdornment={
-            <InputAdornment position="end">
-              <IconButton
-                style={{ display: `${click ? 'none' : 'block'}` }}
-                onClick={() => {
-                  setClick(true);
-                  const target_iban: HTMLInputElement = document.getElementById(
-                    'transaction-iban',
-                  ) as HTMLInputElement;
-                  const transaction_amount: HTMLInputElement = document.getElementById(
-                    'transaction-amount',
-                  ) as HTMLInputElement;
+      {iban != null ? (
+        <>
+          <Typography
+            variant={'h4'}
+            style={{ color: 'rgb(33, 150, 243)', marginTop: '3em', textAlign: 'center' }}
+          >
+            <ForwardToInboxIcon /> Send money ⬇
+          </Typography>
 
-                  // saves data to temp variables.
-                  const targetIbanValue: string = target_iban.value.toUpperCase();
-                  const targetAmount: string = transaction_amount.value;
+          <FormControl fullWidth sx={{ m: 1 }}>
+            <TextField
+              id="transaction-iban"
+              label="IBAN"
+              variant="outlined"
+              InputProps={{
+                startAdornment: <InputAdornment position="start">#</InputAdornment>,
+              }}
+              style={{ width: '100%', marginTop: '0.5em', textTransform: 'uppercase' }}
+            />
+          </FormControl>
+          <FormControl fullWidth sx={{ m: 1 }}>
+            <InputLabel htmlFor="transaction-amount">Amount</InputLabel>
+            <OutlinedInput
+              className={classes.numberInput}
+              startAdornment={<InputAdornment position="start">$</InputAdornment>}
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton
+                    style={{ display: `${click ? 'none' : 'block'}` }}
+                    onClick={() => {
+                      setClick(true);
+                      const target_iban: HTMLInputElement = document.getElementById(
+                        'transaction-iban',
+                      ) as HTMLInputElement;
+                      const transaction_amount: HTMLInputElement = document.getElementById(
+                        'transaction-amount',
+                      ) as HTMLInputElement;
 
-                  // Clear Data + Disable button.
-                  //setClick(true);
+                      // saves data to temp variables.
+                      const targetIbanValue: string = target_iban.value.toUpperCase();
+                      const targetAmount: string = transaction_amount.value;
 
-                  // resets values.
-                  target_iban.value = '';
-                  transaction_amount.value = '';
-                  console.log('Attempting transfer..');
-                  if (isEnvBrowser()) {
-                    let notification: INotification = {
-                      app: 'BANKING',
-                      id: 'banking:transaction:invalid_iban',
-                      title: 'success',
-                      content: 'mock success',
-                      icon,
-                      notificationIcon,
-                    };
-                    addNotificationAlert(notification);
-                    return;
-                  }
+                      // Clear Data + Disable button.
+                      //setClick(true);
 
-                  fetchNui<ServerPromiseResp<TransactionStatus>>(BankingEvents.TRANSFER_MONEY, {
-                    targetIBAN: targetIbanValue,
-                    amount: targetAmount,
-                  })
-                    .then((resp) => {
-                      let notification: INotification;
-                      console.log(resp.data);
-                      switch (resp.data) {
-                        case TransactionStatus.SUCCESS:
-                          console.log('transferring..');
-                          break;
-                        case TransactionStatus.INVALID_TARGET_IBAN:
-                          notification = {
-                            app: 'BANKING',
-                            id: 'banking:transaction:invalid_iban',
-                            title: 'no such iban',
-                            content: 'The IBAN you provided does not exist',
-                            icon,
-                            notificationIcon,
-                          };
-                          break;
-                        case TransactionStatus.INVALID_NUMBER:
-                          notification = {
-                            app: 'BANKING',
-                            id: 'banking:transaction:hackerman',
-                            title: 'Hackerman',
-                            content: 'That is not even a number!?',
-                            icon,
-                            notificationIcon,
-                          };
-                          break;
-                        case TransactionStatus.INSUFFICIENT_BALANCE:
-                          notification = {
-                            app: 'BANKING',
-                            id: 'banking:transaction:insufficient_balance',
-                            title: 'Poor man',
-                            content: 'You do not have this amount of money',
-                            icon,
-                            notificationIcon,
-                          };
-                          break;
-                        default:
-                          notification = {
+                      // resets values.
+                      target_iban.value = '';
+                      transaction_amount.value = '';
+                      console.log('Attempting transfer..');
+                      if (isEnvBrowser()) {
+                        let notification: INotification = {
+                          app: 'BANKING',
+                          id: 'banking:transaction:invalid_iban',
+                          title: 'success',
+                          content: 'mock success',
+                          icon,
+                          notificationIcon,
+                        };
+                        addNotificationAlert(notification);
+                        return;
+                      }
+
+                      fetchNui<ServerPromiseResp<TransactionStatus>>(BankingEvents.TRANSFER_MONEY, {
+                        targetIBAN: targetIbanValue,
+                        amount: targetAmount,
+                      })
+                        .then((resp) => {
+                          let notification: INotification;
+                          console.log(resp.data);
+                          switch (resp.data) {
+                            case TransactionStatus.SUCCESS:
+                              console.log('transferring..');
+                              break;
+                            case TransactionStatus.INVALID_TARGET_IBAN:
+                              notification = {
+                                app: 'BANKING',
+                                id: 'banking:transaction:invalid_iban',
+                                title: 'no such iban',
+                                content: 'The IBAN you provided does not exist',
+                                icon,
+                                notificationIcon,
+                              };
+                              break;
+                            case TransactionStatus.INVALID_NUMBER:
+                              notification = {
+                                app: 'BANKING',
+                                id: 'banking:transaction:hackerman',
+                                title: 'Hackerman',
+                                content: 'That is not even a number!?',
+                                icon,
+                                notificationIcon,
+                              };
+                              break;
+                            case TransactionStatus.INSUFFICIENT_BALANCE:
+                              notification = {
+                                app: 'BANKING',
+                                id: 'banking:transaction:insufficient_balance',
+                                title: 'Poor man',
+                                content: 'You do not have this amount of money',
+                                icon,
+                                notificationIcon,
+                              };
+                              break;
+                            default:
+                              notification = {
+                                app: 'BANKING',
+                                id: 'banking:transaction:error',
+                                title: 'uh oh!',
+                                content: `Something went wrong (default)!`,
+                                icon,
+                                notificationIcon,
+                              };
+                              break;
+                          }
+                          if (notification != undefined) {
+                            addNotificationAlert(notification);
+                          }
+
+                          setTimeout(function () {
+                            setClick(false);
+                            setUpdater(updater + 1);
+                          }, 500);
+                        })
+                        .catch(() => {
+                          console.log('error in banking dashboard');
+                          let notification: INotification = {
                             app: 'BANKING',
                             id: 'banking:transaction:error',
-                            title: 'uh oh!',
-                            content: `Something went wrong (default)!`,
+                            title: 'error!',
+                            content: 'Bobby didnt test this...',
                             icon,
                             notificationIcon,
                           };
-                          break;
-                      }
-                      if (notification != undefined) {
-                        addNotificationAlert(notification);
-                      }
-
-                      setTimeout(function () {
-                        setClick(false);
-                        setUpdater(updater + 1);
-                      }, 500);
-                    })
-                    .catch(() => {
-                      console.log('error in banking dashboard');
-                      let notification: INotification = {
-                        app: 'BANKING',
-                        id: 'banking:transaction:error',
-                        title: 'error!',
-                        content: 'Bobby didnt test this...',
-                        icon,
-                        notificationIcon,
-                      };
-                      addNotificationAlert(notification);
-                      setTimeout(function () {
-                        setClick(false);
-                        setUpdater(updater + 1);
-                      }, 500);
-                    });
-                }}
-              >
-                <SendIcon />
-              </IconButton>
-            </InputAdornment>
-          }
-          id="transaction-amount"
-          type={'number'}
-          label="Amount"
-        />
-      </FormControl>
+                          addNotificationAlert(notification);
+                          setTimeout(function () {
+                            setClick(false);
+                            setUpdater(updater + 1);
+                          }, 500);
+                        });
+                    }}
+                  >
+                    <SendIcon />
+                  </IconButton>
+                </InputAdornment>
+              }
+              id="transaction-amount"
+              type={'number'}
+              label="Amount"
+            />
+          </FormControl>
+        </>
+      ) : (
+        ''
+      )}
       <br></br>
     </Box>
   );

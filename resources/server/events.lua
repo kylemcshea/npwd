@@ -19,25 +19,26 @@ return result
 end
 function getPlayerInfoFromIdentifier(identifier)
     local result = MySQL.Sync.fetchAll('SELECT * FROM users WHERE identifier = @identifier', { ['@identifier'] = identifier })[1]
-  
     return result
 end
 
 function getServerIdFromIdentifier(identifier)
+    print(identifier)
     -- if (identifiers[identifier] ~=nil) then 
     --     print("using cached identifier",identifiers[identifier])
     --     return identifiers[identifier];
     -- else 
     local xPlayers = ESX.GetPlayers()
-	for i=1, #xPlayers, 1 do
-        local xForPlayer = ESX.GetPlayerFromId(xPlayers[i])
-        if xForPlayer.identifier == identifier and identifier ~= nil then
-            identifiers[identifier] = i
-            print("inserting new identifier in table", i, identifiers[identifier])
-            return i
+    print(json.encode(xPlayers))
+	for k, v in pairs(xPlayers) do
+        print('we in getServerIdFromIdentifier loop.', v)
+        local xForPlayer = ESX.GetPlayerFromId(v)
+        if xForPlayer.getIdentifier() == identifier and identifier ~= nil then
+         return v
         end
     end
 -- end
+    print('we ended up hitting nil.')
     return nil
 end
 
@@ -111,15 +112,11 @@ end)
 
 
 RegisterNetEvent("npwd:GetBankAmount")
-AddEventHandler("npwd:GetBankAmount", function(identifier, event, cb)
-
-    local xPlayer = ESX.GetPlayerFromId(getServerIdFromIdentifier(identifier))
-    print(identifier)
-    print(xPlayer)
-
-local balance = xPlayer.getAccount('bank')
-print("calling back balance", balance.money, "to", event)
-TriggerEvent(event, balance.money)
+AddEventHandler("npwd:GetBankAmount", function(src, event, cb)
+    print("src:",src)
+    local xPlayer = ESX.GetPlayerFromId(src)
+    local balance = xPlayer.getAccount('bank')
+    TriggerEvent(event, balance.money)
 
 end)
 

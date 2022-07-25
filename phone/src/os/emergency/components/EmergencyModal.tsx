@@ -47,6 +47,7 @@ export const EmergencyModal: React.FC = () => {
   //const { call } = useCall();
   const wallpaper = useWallpaper();
   const [context, setContext] = useState(null);
+
   //if (!call) return null;
   useEffect(() => {
     if (isEnvBrowser()) {

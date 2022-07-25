@@ -9,15 +9,11 @@ import {
 import DbInterface from '../db/db_wrapper';
 
 export class _BankingDB {
-  async fetchAccounts(identifier: string): Promise<Account> {
+  async fetchAccounts(source: number, identifier: string): Promise<Account> {
     if (identifier == null) return null;
     const query = 'SELECT JSON_VALUE(accounts, ?) AS bank, iban FROM users WHERE identifier = ?';
     const result = (await DbInterface.fetch<Account[]>(query, ['$.bank', identifier]))[0];
-    let listener;
-    const balance = await getBalance(identifier);
-
-    removeEventListener(listener, () => {});
-
+    const balance = await getBalance(source);
     return <Account>{
       bank: balance,
       iban: result.iban,
@@ -36,6 +32,7 @@ export class _BankingDB {
     identifier: string,
     targetIBAN: string,
     amount: number,
+    source: number,
   ): Promise<TransactionStatus> {
     try {
       if (identifier == null) return TransactionStatus.GENERIC_ERROR;
@@ -43,15 +40,15 @@ export class _BankingDB {
       if (amount <= 0) return TransactionStatus.INVALID_NUMBER;
 
       const GetTransactionquery = `SELECT identifier AS identifier, JSON_VALUE(accounts, "$.bank") AS bank, iban, target.target_bank, target.target_iban
-                    FROM users,  
-                    (SELECT identifier AS target_identifier, iban AS target_iban, JSON_VALUE(accounts, "$.bank") AS target_bank FROM users WHERE iban =?) AS target 
-                    WHERE identifier = ?`;
+                                  FROM users,  
+                                  (SELECT identifier AS target_identifier, iban AS target_iban, JSON_VALUE(accounts, "$.bank") AS target_bank FROM users WHERE iban =?) AS target 
+                                  WHERE identifier = ?`;
 
       const result = await DbInterface.fetch<TransactionData[]>(GetTransactionquery, [
         targetIBAN,
         identifier,
       ]);
-      const balance = await getBalance(identifier);
+      const balance = await getBalance(source);
       const amountResult: number = result.length;
       if (amountResult == 0) return TransactionStatus.INVALID_TARGET_IBAN;
 
@@ -70,7 +67,7 @@ export class _BankingDB {
   }
 }
 
-const getBalance = async (identifier: string) => {
+const getBalance = async (source: number) => {
   let listener;
   const balance = await new Promise<number>((resolve) => {
     const eventID = `npwd:setBankAmount-${Date.now()}`;
@@ -80,8 +77,9 @@ const getBalance = async (identifier: string) => {
       console.log(balance);
       resolve(balance);
     });
-    emit('npwd:GetBankAmount', identifier, eventID);
+    emit('npwd:GetBankAmount', source, eventID);
     console.log(`starting event handler: ${eventID}`);
+    removeEventListener(listener, () => {});
   });
   return balance;
 };

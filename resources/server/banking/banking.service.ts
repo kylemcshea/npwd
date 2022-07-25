@@ -38,7 +38,7 @@ class _BankingService {
       // Grabs Player ID
       const identifier = PlayerService.getIdentifier(req.source);
       // Grabs Bills pertaining to the player.
-      const listings = await this.bankingDB.fetchAccounts(identifier);
+      const listings = await this.bankingDB.fetchAccounts(req.source, identifier);
       resp({ data: listings, status: 'ok' });
     } catch (e) {
       bankingLogger.error(`Failed to fetch bank info, ${e.message}`, {
@@ -60,6 +60,7 @@ class _BankingService {
         identifier,
         req.data.targetIBAN,
         req.data.amount,
+        req.source,
       );
       resp({ data: transStatus, status: 'ok' });
     } catch (e) {
