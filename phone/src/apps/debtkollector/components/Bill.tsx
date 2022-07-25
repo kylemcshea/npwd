@@ -98,9 +98,7 @@ export const Bill: React.FC<Bills> = ({ children, ...bill }) => {
     // fetch bill by { bill.id }
     // pay the bill
     e.stopPropagation();
-    console.log(`paying bill ${JSON.stringify(bill)}`);
     fetchNui<ServerPromiseResp<Bills>>(BillingEvents.PAY_BILL, bill.id).then(() => {
-      console.log('emitted paybill');
       setDeleted(true);
     });
   };
