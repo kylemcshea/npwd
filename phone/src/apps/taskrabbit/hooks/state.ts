@@ -20,6 +20,14 @@ const jobData: TaskRabbitJobs[] = [
   },
   {
     id: 2,
+    title: 'Scamazon 🏢',
+    description:
+      'Pickup and deliver packages to areas around the city to become the next Jeff Bezos!',
+    stars: 3,
+    blip_location: [28.7854, -2652.3489],
+  },
+  {
+    id: 3,
     title: 'Mining ⛏',
     description:
       'Mine to your hearts content, get numerous materials which can be sold to various people you have gunpowder people will buy it off you just make an ad or use it to stock up on your own armory!',
@@ -27,7 +35,7 @@ const jobData: TaskRabbitJobs[] = [
     blip_location: [2829.3926, 2800.6096],
   },
   {
-    id: 3,
+    id: 4,
     title: 'Garbage Runs 🗑',
     description:
       'Clean the streets of DreamState in exchange for some cold hard cash and materials that no-one is gonna notice is gone since its all rubbish right?',
@@ -35,7 +43,7 @@ const jobData: TaskRabbitJobs[] = [
     blip_location: [-321.5192, -1546.7036],
   },
   {
-    id: 4,
+    id: 5,
     title: 'Salvaging 👙',
     description:
       "There is so much treasure out there to find in the seas but be careful you're not the only one after the treasure, people will pay a pretty penny or stock up for the next apocalypse who knows!",
@@ -43,7 +51,7 @@ const jobData: TaskRabbitJobs[] = [
     blip_location: [-2079.8958, 2601.3701],
   },
   {
-    id: 5,
+    id: 6,
     title: 'Hunting 🦌',
     description:
       "Come on down to the ranch and get your tasks today the more you hunt the better you'll be rewarded. Restaurants will also buy your wares for some extra cash!",
@@ -51,7 +59,7 @@ const jobData: TaskRabbitJobs[] = [
     blip_location: [1219.3966, 1846.7964],
   },
   {
-    id: 6,
+    id: 7,
     title: 'Apply For EMS 🚑',
     description:
       'Want to be a part of the driving force of the city? Apply today in discordia which also comes along with great benefits + top notch salary!',
