@@ -154,14 +154,10 @@ export const BankingDashboardPage: React.FC = () => {
                       // saves data to temp variables.
                       const targetIbanValue: string = target_iban.value.toUpperCase();
                       const targetAmount: string = transaction_amount.value;
-
-                      // Clear Data + Disable button.
-                      //setClick(true);
-
+                      
                       // resets values.
                       target_iban.value = '';
                       transaction_amount.value = '';
-                      console.log('Attempting transfer..');
                       if (isEnvBrowser()) {
                         let notification: INotification = {
                           app: 'BANKING',
@@ -181,7 +177,6 @@ export const BankingDashboardPage: React.FC = () => {
                       })
                         .then((resp) => {
                           let notification: INotification;
-                          console.log(resp.data);
                           switch (resp.data) {
                             case TransactionStatus.SUCCESS:
                               break;
@@ -236,7 +231,6 @@ export const BankingDashboardPage: React.FC = () => {
                           }, 500);
                         })
                         .catch(() => {
-                          console.log('error in banking dashboard');
                           let notification: INotification = {
                             app: 'BANKING',
                             id: 'banking:transaction:error',
