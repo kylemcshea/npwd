@@ -71,14 +71,10 @@ const getBalance = async (source: number) => {
   let listener;
   const balance = await new Promise<number>((resolve) => {
     const eventID = `npwd:setBankAmount-${Date.now()}`;
-    console.log('npwd:GetBankAmount');
     listener = on(eventID, function (balance: number) {
-      console.log(`triggered event handler: ${eventID}`);
-      console.log(balance);
       resolve(balance);
     });
     emit('npwd:GetBankAmount', source, eventID);
-    console.log(`starting event handler: ${eventID}`);
     removeEventListener(listener, () => {});
   });
   return balance;

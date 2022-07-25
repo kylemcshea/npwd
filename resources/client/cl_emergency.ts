@@ -20,7 +20,6 @@ const callSound: Sound = new Sound(callSoundName, soundSet);
 const hangupSound = new Sound(hangUpSoundName, hangUpSoundSet);
 
 RegisterNuiCB<AnimationModel>(EmergencyEvents.ANIMATION, (data, cb) => {
-  console.log('iscalling', data);
   if (data.isCalling) {
     animationService.startPhoneCall();
   } else {
@@ -28,12 +27,6 @@ RegisterNuiCB<AnimationModel>(EmergencyEvents.ANIMATION, (data, cb) => {
   }
   cb({});
 });
-
-// RegisterNuiCB<DispatchModel>(EmergencyEvents.DISPATCH, (dispatch, cb) => {
-//   console.log('dispatching', dispatch, GetEntityCoords(GetPlayerPed(-1), true));
-//   emitNet('core_dispatch:addMessage',dispatch.message,GetEntityCoords(GetPlayerPed(-1), true),dispatch.job,5000,11,5 );
-//   cb({});
-// });
 
 RegisterNuiCB<DispatchModel>(EmergencyEvents.DISPATCH, (dispatch, cb) => {
   //TODO: implement
@@ -51,23 +44,18 @@ RegisterNuiCB<DispatchModel>(EmergencyEvents.DISPATCH, (dispatch, cb) => {
 });
 
 RegisterNuiCB<AudioEventArguments>(EmergencyEvents.PLAY_AUDIO, (args, cb) => {
-  console.log('Data in cl_emergency', args.type);
   switch (args.type) {
     case AudioTypes.START_CALL:
       callSound.play();
       setTimeout(() => {
-        console.log('stopping sound');
         callSound.stop();
-
         cb({});
       }, 3000);
       break;
     case AudioTypes.END_CALL:
       hangupSound.play();
       setTimeout(() => {
-        console.log('stopping sound');
         hangupSound.stop();
-
         cb({});
       }, 1000);
   }
