@@ -20,8 +20,6 @@ export const EmergencyDetails = React.forwardRef((props: any, ref) => {
     fetchNui<ServerPromiseResp<DispatchModel>>(EmergencyEvents.DISPATCH, {
       job: props.service,
       message: message,
-    }).then((data) => {
-      console.log('dispatched nui', data);
     });
   };
   const handleSendDescription = () => {
