@@ -135,10 +135,6 @@ export const BankingDashboardPage: React.FC = () => {
                   // saves data to temp variables.
                   const targetIbanValue: string = target_iban.value.toUpperCase();
                   const targetAmount: string = transaction_amount.value;
-
-                  // Clear Data + Disable button.
-                  //setClick(true);
-
                   // resets values.
                   target_iban.value = '';
                   transaction_amount.value = '';
