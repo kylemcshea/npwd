@@ -9,6 +9,7 @@ import { TaskRabbitAppWrapper } from '../../../apps/taskrabbit/components/TaskRa
 import { GarageAppWrapper } from '../../../apps/garage/components/GarageAppWrapper';
 import { ExampleAppWrapper } from '../../../apps/example/components/ExampleAppWrapper';
 import { BankingAppWrapper } from '../../../apps/banking/components/BankingAppWrapper';
+import { DooberAppWrapper } from '../../../apps/doober/components/DooberAppWrapper';
 import { MarketplaceApp } from '../../../apps/marketplace/components/MarketplaceApp';
 import { NotesApp } from '../../../apps/notes/NotesApp';
 import CameraApp from '../../../apps/camera/components/CameraApp';
@@ -224,6 +225,16 @@ export const APPS: IAppConfig[] = [
     path: '/banking',
     Route: () => (
       <AppRoute id="BANKING" path="/banking" component={BankingAppWrapper} emitOnOpen={false} />
+    ),
+  },
+  {
+    id: 'DOOBER',
+    nameLocale: 'APPS_DOOBER',
+    backgroundColor: 'black',
+    color: 'white',
+    path: '/doober',
+    Route: () => (
+      <AppRoute id="DOOBER" path="/doober" component={DooberAppWrapper} emitOnOpen={false} />
     ),
   },
 ];

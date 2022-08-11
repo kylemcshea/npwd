@@ -4,6 +4,7 @@ import { useSettings } from '../../../apps/settings/hooks/useSettings';
 import { useNotifications } from '@os/notifications/hooks/useNotifications';
 import { DEFAULT_ALERT_HIDE_TIME } from '@os/notifications/notifications.constants';
 import { phoneState } from './state';
+import { toggleKeys } from '../../../ui/components/Input';
 
 export const usePhoneVisibility = () => {
   const [visibility, setVisibility] = useRecoilState(phoneState.visibility);
@@ -17,6 +18,8 @@ export const usePhoneVisibility = () => {
   useEffect(() => {
     if (visibility) {
       setNotifVisibility(false);
+    } else {
+      toggleKeys(false);
     }
   }, [visibility]);
 

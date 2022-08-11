@@ -19,6 +19,7 @@ export const usePhone = (): IUsePhone => {
   const { removeAlerts } = useNotifications();
 
   const closePhone = () => {
+    print('closed');
     removeAlerts();
     fetchNui(PhoneEvents.CLOSE_PHONE, undefined, {}).catch();
   };

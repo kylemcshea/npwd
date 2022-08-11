@@ -1,6 +1,8 @@
 import { newPhoneProp, removePhoneProp } from '../functions';
 import { Delay } from '../../utils/fivem';
 
+console.log('TEST FROM ANIMATIONS');
+
 export enum AnimationState {
   ON_CALL,
   PHONE_OPEN,
@@ -88,6 +90,7 @@ export class AnimationService {
   }
 
   async closePhone(): Promise<void> {
+    console.log('CLOSED PHONE LINE 91');
     removePhoneProp();
     this.setPhoneState(AnimationState.PHONE_OPEN, false);
     if (!this.onCall) {
