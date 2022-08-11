@@ -107,7 +107,8 @@ export const VehicleListing: React.FC<GarageVehicle> = ({ children, ...vehicle }
     // Fetch Vehicle Model Name From Hash.
     setVehName(fetchVehicleNameByHash(vehicle.model));
     if (vehicle.stored === 1) {
-      setGarageData(fetchGarageNameById(vehicle.garageId));
+      const garage = fetchGarageNameById(vehicle.garageId);
+      !!garage ? setGarageData(garage) : setGarageData({ name: 'Unknown Garage', location: null });
     }
   }, [vehicle.model, vehicle.garageId, vehicle.stored]);
 
