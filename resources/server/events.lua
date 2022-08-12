@@ -23,13 +23,7 @@ function getPlayerInfoFromIdentifier(identifier)
 end
 
 function getServerIdFromIdentifier(identifier)
-    print(identifier)
-    -- if (identifiers[identifier] ~=nil) then 
-    --     print("using cached identifier",identifiers[identifier])
-    --     return identifiers[identifier];
-    -- else 
     local xPlayers = ESX.GetPlayers()
-    print(json.encode(xPlayers))
 	for k, v in pairs(xPlayers) do
         print('we in getServerIdFromIdentifier loop.', v)
         local xForPlayer = ESX.GetPlayerFromId(v)
@@ -37,8 +31,6 @@ function getServerIdFromIdentifier(identifier)
          return v
         end
     end
--- end
-    print('we ended up hitting nil.')
     return nil
 end
 
