@@ -8,6 +8,7 @@ import { MessagesApp } from '../../../apps/messages/components/MessagesApp';
 import { TaskRabbitAppWrapper } from '../../../apps/taskrabbit/components/TaskRabbitAppWrapper';
 import { GarageAppWrapper } from '../../../apps/garage/components/GarageAppWrapper';
 import { ExampleAppWrapper } from '../../../apps/example/components/ExampleAppWrapper';
+import { WorkrAppWrapper } from '../../../apps/workr/components/WorkrAppWrapper';
 import { BankingAppWrapper } from '../../../apps/banking/components/BankingAppWrapper';
 import { MarketplaceApp } from '../../../apps/marketplace/components/MarketplaceApp';
 import { NotesApp } from '../../../apps/notes/NotesApp';
@@ -238,6 +239,16 @@ if (process.env.NODE_ENV === 'development') {
     path: '/example',
     Route: () => (
       <AppRoute id="EXAMPLE" path="/example" component={ExampleAppWrapper} emitOnOpen={false} />
+    ),
+  });
+  APPS.push({
+    id: 'WORKR',
+    nameLocale: 'APPS_WORKR',
+    backgroundColor: blue[500],
+    color: blue[50],
+    path: '/workr',
+    Route: () => (
+      <AppRoute id="WORKR" path="/workr" component={WorkrAppWrapper} emitOnOpen={false} />
     ),
   });
 
