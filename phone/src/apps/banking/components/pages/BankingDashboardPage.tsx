@@ -14,7 +14,7 @@ import {
 import { useApp } from '@os/apps/hooks/useApps';
 import SendIcon from '@mui/icons-material/Send';
 import { ServerPromiseResp } from '@typings/common';
-import { Account, BankingEvents, TransactionResult, TransactionStatus } from '@typings/banking';
+import { Account, BankingEvents, TransactionStatus } from '@typings/banking';
 import { isEnvBrowser } from '@utils/misc';
 import Divider from '@mui/material/Divider';
 import { useNotifications } from '@os/notifications/hooks/useNotifications';
@@ -154,7 +154,7 @@ export const BankingDashboardPage: React.FC = () => {
                       // saves data to temp variables.
                       const targetIbanValue: string = target_iban.value.toUpperCase();
                       const targetAmount: string = transaction_amount.value;
-                      
+
                       // resets values.
                       target_iban.value = '';
                       transaction_amount.value = '';
