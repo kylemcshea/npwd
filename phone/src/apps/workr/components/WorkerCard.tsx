@@ -4,6 +4,7 @@ import { Box, Button, Typography, Paper } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import CircularProgress from '@mui/material/CircularProgress';
 import { grabWorkerDataByCategory, Worker } from '../hooks/state';
+import { useCall } from '@os/call/hooks/useCall';
 
 const useStyles = makeStyles((theme) => ({
   buttonStyle: {
@@ -33,12 +34,14 @@ export const WorkerCard: React.FC = () => {
   const type = new URLSearchParams(search).get('type');
   const [workers, setWorkers] = useState<Worker[]>(null);
 
+  const { initializeCall } = useCall();
+
   useEffect(() => {
     setWorkers(grabWorkerDataByCategory(type));
   }, [type]);
 
-  const callWorker = () => {
-    console.log('hi');
+  const handleCall = (phoneNumber) => {
+    initializeCall(phoneNumber);
   };
 
   return (
@@ -58,7 +61,10 @@ export const WorkerCard: React.FC = () => {
                   {workers[oneKey].company}
                 </Typography>
               </div>
-              <Button className={classes.buttonStyle} onClick={callWorker}>
+              <Button
+                className={classes.buttonStyle}
+                onClick={() => handleCall(workers[oneKey].phoneNumber)}
+              >
                 Make Phone Call
               </Button>
             </Paper>
