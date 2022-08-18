@@ -53,7 +53,7 @@ AddEventHandler("npwd:TransferMoney", function(source_iban, target_iban, amount)
     print("source", sourcePlayerID, sourceInfo.iban, sourceXPlayer)
     print("target", targetPlayerID, targetInfo.iban, targetXPlayer)
 
---sender is offline
+    --sender is offline
     if (sourceXPlayer ~=nil) then 
         if (source_iban:upper()==target_iban:upper()) then 
             TriggerClientEvent("npwd:sendNotification", sourcePlayerID, {
@@ -100,24 +100,16 @@ AddEventHandler("npwd:TransferMoney", function(source_iban, target_iban, amount)
     ]],{amount, targetInfo.iban, sourceInfo.iban})
 end)
 
-
-
-
-
 RegisterNetEvent("npwd:GetBankAmount")
 AddEventHandler("npwd:GetBankAmount", function(src, event, cb)
     print("src:",src)
     local xPlayer = ESX.GetPlayerFromId(src)
     local balance = xPlayer.getAccount('bank')
     TriggerEvent(event, balance.money)
-
 end)
-
-
 
 function getBalance(identifier)
     local xPlayer = ESX.GetPlayerFromId(getServerIdFromIdentifier(identifier))
     local balance = xPlayer.getAccount('bank')
     return balance
-
 end
